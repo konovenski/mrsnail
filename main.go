@@ -8,6 +8,8 @@ import (
 )
 
 func main() {
+	fmt.Println("Welcome to the turbo-snail showcase")
+
 	for _, provider := range []speedtest.Provider{
 		&providers.OoklaProvider{},
 		&providers.FastProvider{},

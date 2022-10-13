@@ -18,7 +18,7 @@ func TestFastProvider(t *testing.T) {
 		t.Error("Got an error:", err)
 	}
 
-	if f.targetAmount == 0 || f.fileSizeInMBytes == 0 {
+	if f.TargetAmount == 0 || f.FileSizeInMBytes == 0 {
 		t.Error("Target amount and file size should be > 0")
 	}
 
@@ -32,7 +32,7 @@ func TestFastProvider(t *testing.T) {
 		t.Error("Speedtest should return error in case of 0 payload")
 	}
 
-	mBits := float64(f.fileSizeInMBytes*f.targetAmount*8) / 1
+	mBits := float64(f.FileSizeInMBytes*f.TargetAmount*8) / 1
 	bits := uint64(mBits * 1024 * 1024)
 	if f.calculateSpeed(time.Second) != bits {
 		t.Error("Speed should be calculates in bits, using the corresponding parameters from provider config")

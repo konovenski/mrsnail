@@ -5,15 +5,18 @@ import (
 	ookla "github.com/showwin/speedtest-go/speedtest"
 )
 
+// OoklaProvider is being used for ookla based speedtest.
 type OoklaProvider struct {
 	initialized bool
 	target      *ookla.Server
 }
 
+// Name returns human-readable name
 func (o *OoklaProvider) Name() string {
 	return "ookla"
 }
 
+// Init receives test URL for ookla provider.
 func (o *OoklaProvider) Init() error {
 	user, err := ookla.FetchUserInfo()
 	if err != nil {
@@ -37,6 +40,7 @@ func (o *OoklaProvider) Init() error {
 	return nil
 }
 
+// DownloadTest performs download speedtest.
 func (o *OoklaProvider) DownloadTest() (bits uint64, err error) {
 	if !o.initialized {
 		return 0, errors.New("provider was not initialized")
@@ -50,6 +54,7 @@ func (o *OoklaProvider) DownloadTest() (bits uint64, err error) {
 	return convertOoklaResult(o.target.DLSpeed), nil
 }
 
+// UploadTest performs upload speedtest.
 func (o *OoklaProvider) UploadTest() (bits uint64, err error) {
 	if !o.initialized {
 		return 0, errors.New("provider was not initialized")
@@ -63,6 +68,7 @@ func (o *OoklaProvider) UploadTest() (bits uint64, err error) {
 	return convertOoklaResult(o.target.ULSpeed), nil
 }
 
+// CompleteTest performs both download and upload speedtest.
 func (o *OoklaProvider) CompleteTest() (dBits uint64, uBits uint64, err error) {
 	dBits, err = o.DownloadTest()
 	if err != nil {
@@ -76,6 +82,7 @@ func (o *OoklaProvider) CompleteTest() (dBits uint64, uBits uint64, err error) {
 	return dBits, uBits, nil
 }
 
+// convertOoklaResult converts ooklas format (MB) to our format (bits)
 func convertOoklaResult(mBytes float64) (bits uint64) {
 	return uint64(mBytes * 1024 * 1024)
 }
