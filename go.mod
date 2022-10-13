@@ -1,4 +1,4 @@
-module mrsnail
+module turbo-snail
 
 go 1.18
 

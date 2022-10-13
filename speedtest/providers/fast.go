@@ -108,6 +108,7 @@ func (f *FastProvider) runSpeedTest(mode string, payloadSize int) (time.Duration
 	startTime := time.Now()
 
 	for _, target := range f.targets {
+		target := target
 		eg.Go(func() error {
 			switch mode {
 			case "download":

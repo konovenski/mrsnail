@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"mrsnail/speedtest"
-	"mrsnail/speedtest/providers"
+	"turbo-snail/speedtest"
+	"turbo-snail/speedtest/providers"
 )
 
 func main() {
