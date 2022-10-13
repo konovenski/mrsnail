@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/konovenski/turbo-snail/speedtest"
+	"github.com/konovenski/turbo-snail/speedtest/providers"
 	"log"
-	"mrsnail/speedtest"
-	"mrsnail/speedtest/providers"
 )
 
 func main() {

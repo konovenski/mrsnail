@@ -4,7 +4,7 @@
 
 #### *according to Dumitru Conovenschi rating
 
-![Mr. Snail](doc/snail.jpg)
+![Turbo Snail](doc/snail.jpg)
 
 # Using as library
 ## Installation:

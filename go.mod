@@ -1,4 +1,4 @@
-module mrsnail
+module github.com/konovenski/turbo-snail
 
 go 1.18
 
