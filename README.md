@@ -9,10 +9,11 @@
 # Using as library
 ## Installation:
 ```bash
-    $ go get github.com/konovenski/turbo-snail
+$ go get github.com/konovenski/turbo-snail
 ```
 ## Usage:
 ```go
+import "github.com/konovenski/turbo-snail"
 // Pick provider (or write your own, using our interface)
 // and initialize the test
 ookla := speedtest.NewSpeedtest(&providers.OoklaProvider{})
@@ -48,8 +49,6 @@ fast provider initialized
 Speedtest results for 'fast' provider: 
 Download speed: 47.91 MB/s
 Upload speed: 70.64 MB/s
-
-
 ```
 
 ## LICENSE
