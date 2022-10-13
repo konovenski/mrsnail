@@ -9,7 +9,7 @@ import (
 
 func main() {
 	for _, provider := range []speedtest.Provider{
-		//	&providers.OoklaProvider{},
+		&providers.OoklaProvider{},
 		&providers.FastProvider{},
 	} {
 		fmt.Println()
@@ -36,9 +36,9 @@ func runTest(provider speedtest.Provider) {
 		return
 	}
 
-	fmt.Printf(TestFinishedTemplate, sp.Name(), toMB(downloadBits), toMB(uploadBits))
+	fmt.Printf(TestFinishedTemplate, sp.Name(), toMBits(downloadBits), toMBits(uploadBits))
 }
 
-func toMB(bits uint64) float64 {
+func toMBits(bits uint64) float64 {
 	return float64(bits) / 1024 / 1024
 }

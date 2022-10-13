@@ -1,11 +1,13 @@
 package providers
 
 import (
+	"errors"
 	ookla "github.com/showwin/speedtest-go/speedtest"
 )
 
 type OoklaProvider struct {
-	target *ookla.Server
+	initialized bool
+	target      *ookla.Server
 }
 
 func (o *OoklaProvider) Name() string {
@@ -31,12 +33,15 @@ func (o *OoklaProvider) Init() error {
 	// Slice couldn't be empty corresponding to the implementation.
 	//See FindServer implementation for more info
 	o.target = targets[0]
-
+	o.initialized = true
 	return nil
 }
 
 func (o *OoklaProvider) DownloadTest() (bits uint64, err error) {
-	//err := t.PingTest()
+	if !o.initialized {
+		return 0, errors.New("provider was not initialized")
+	}
+
 	err = o.target.DownloadTest(false)
 	if err != nil {
 		return 0, err
@@ -46,6 +51,10 @@ func (o *OoklaProvider) DownloadTest() (bits uint64, err error) {
 }
 
 func (o *OoklaProvider) UploadTest() (bits uint64, err error) {
+	if !o.initialized {
+		return 0, errors.New("provider was not initialized")
+	}
+
 	err = o.target.UploadTest(false)
 	if err != nil {
 		return 0, err
@@ -68,5 +77,5 @@ func (o *OoklaProvider) CompleteTest() (dBits uint64, uBits uint64, err error) {
 }
 
 func convertOoklaResult(mBytes float64) (bits uint64) {
-	return uint64(mBytes * 1024 * 1024 * 8)
+	return uint64(mBytes * 1024 * 1024)
 }

@@ -19,12 +19,13 @@ import (
 // However, this implementation isn't using the 0-2048 chunk due to lack
 // of information about how to use it during calculations
 
-const FastDefaultTargetAmount int = 5
-const FastDefaultFileSizeInMBytes int = 25
+const FastDefaultTargetAmount uint = 5
+const FastDefaultFileSizeInMBytes uint = 25
 
 type FastProvider struct {
-	fileSizeInMBytes int
-	targetAmount     int
+	initialized      bool
+	fileSizeInMBytes uint
+	targetAmount     uint
 	targets          []string
 }
 
@@ -35,32 +36,45 @@ func (f *FastProvider) Name() string {
 var client = http.Client{}
 
 func (f *FastProvider) Init() error {
-	if f.targetAmount == 0 {
+	if f.targetAmount <= 0 {
 		f.targetAmount = FastDefaultTargetAmount
 	}
 
-	if f.fileSizeInMBytes == 0 {
+	if f.fileSizeInMBytes <= 0 {
 		f.fileSizeInMBytes = FastDefaultFileSizeInMBytes
 	}
 
 	f.targets = fast.GetDlUrls(uint64(f.targetAmount))
-	if len(f.targets) != f.targetAmount {
+	if uint(len(f.targets)) != f.targetAmount {
 		return errors.New("can't fetch any targets")
 	}
+	f.initialized = true
 	return nil
 }
 
 func (f *FastProvider) DownloadTest() (bits uint64, err error) {
+	if !f.initialized {
+		return 0, errors.New("provider was not initialized")
+	}
 	return f.runCompositeSpeedTest("download")
 }
 
 func (f *FastProvider) UploadTest() (bits uint64, err error) {
+	if !f.initialized {
+		return 0, errors.New("provider was not initialized")
+	}
 	return f.runCompositeSpeedTest("upload")
 }
 
 func (f *FastProvider) CompleteTest() (dBits uint64, uBits uint64, err error) {
-	r, _ := f.DownloadTest()
-	u, _ := f.UploadTest()
+	r, err := f.DownloadTest()
+	if err != nil {
+		return 0, 0, err
+	}
+	u, err := f.UploadTest()
+	if err != nil {
+		return 0, 0, err
+	}
 	return r, u, nil
 }
 
@@ -106,6 +120,9 @@ func (f *FastProvider) runCompositeSpeedTest(mode string) (uint64, error) {
 }
 
 func (f *FastProvider) runSpeedTest(mode string, payloadSize int) (time.Duration, error) {
+	if payloadSize < 1 {
+		return 0, errors.New("payload size should be at least 1")
+	}
 	eg := errgroup.Group{}
 	startTime := time.Now()
 
@@ -127,11 +144,11 @@ func (f *FastProvider) runSpeedTest(mode string, payloadSize int) (time.Duration
 	return time.Now().Sub(startTime), nil
 }
 
-func (f *FastProvider) calculateSpeed(seconds time.Duration) uint64 {
+func (f *FastProvider) calculateSpeed(seconds time.Duration) (bits uint64) {
 	if seconds.Seconds() == 0 {
 		return 0
 	}
 	t := seconds.Seconds()
-	mbits := float64(f.fileSizeInMBytes*f.targetAmount*8) / t
-	return uint64(mbits * 1024 * 1024)
+	mBits := float64(f.fileSizeInMBytes*f.targetAmount*8) / t
+	return uint64(mBits * 1024 * 1024)
 }
